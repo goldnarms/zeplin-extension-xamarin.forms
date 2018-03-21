@@ -1,10 +1,6 @@
 {{#styles}}
 <Style x:Key="{{key}}"
-       TargetType="TextBlock">
-    {{#characterSpacing}}
-    <Setter Property="CharacterSpacing"
-            Value="{{characterSpacing}}" />
-    {{/characterSpacing}}
+       TargetType="Label">
     {{#fontFamily}}
     <Setter Property="FontFamily"
             Value="{{fontFamily}}" />
@@ -13,30 +9,22 @@
     <Setter Property="FontSize"
             Value="{{fontSize}}" />
     {{/fontSize}}
-    {{#fontStyle}}
-    <Setter Property="FontStyle"
-            Value="{{fontStyle}}" />
-    {{/fontStyle}}
     {{#fontWeight}}
     <Setter Property="FontWeight"
             Value="{{fontWeight}}" />
     {{/fontWeight}}
-    {{#foreground}}
-    <Setter Property="Foreground"
-            Value="{{foreground}}" />
-    {{/foreground}}
-    {{#lineHeight}}
-    <Setter Property="LineHeight"
-            Value="{{lineHeight}}" />
-    {{/lineHeight}}
+    {{#textColor}}
+    <Setter Property="TextColor"
+            Value="{{TextColor}}" />
+    {{/textColor}}
     {{#textAlignment}}
-    <Setter Property="TextAlignment"
+    <Setter Property="HorizontalTextAlignment"
             Value="{{textAlignment}}" />
     {{/textAlignment}}
-    {{#textTrimming}}
-    <Setter Property="TextTrimming"
-            Value="{{textTrimming}}" />
-    {{/textTrimming}}
+        {{#lineBreakMode}}
+    <Setter Property="LineBreakMode"
+            Value="{{lineBreakMode}}" />
+    {{/lineBreakMode}}
 </Style>
 
 {{/styles}}
