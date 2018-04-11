@@ -55,16 +55,8 @@ function xamlFontAttributes(fontWeight) {
   }
 }
 
-function xamlCharacterSpacing(letterSpacing) {
-  // LetterSpacing is in points
-  // CharacterSpacing is in units of 1/1000 of an em
-  // 1 em = 12 points
-  return Math.round((letterSpacing / 12) * 1000);
-}
-
 function xamlStyle(context, textStyle) {
   const ignoreFontFamily = context.getOption('ignoreFontFamily');
-  const useFfImageLoadning = context.getOption('useFfImageLoadning');
   const textAlignmentMode = context.getOption('textAlignmentMode');
   const hasTextAlignment = textAlignmentMode === 'style';
   const textColor = textStyle.color && xamlColorLiteral(context, textStyle.color);
@@ -169,11 +161,6 @@ function layer(context, selectedLayer) {
   if (selectedLayer.type === 'text') {
     const label = xamlLabel(context, selectedLayer);
     const code = labelTemplate(label);
-    return xamlCode(code);
-  }
-  else if(selectedLayer.type ==='image'){
-    const image = xamlImage(context, selectedLayer);
-    const code = imageTemplate(image);
     return xamlCode(code);
   }
   return null;
