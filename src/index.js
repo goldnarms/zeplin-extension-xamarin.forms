@@ -39,12 +39,6 @@ function xamlColor(context, color) {
   };
 }
 
-function xamlPointLiteral(point) {
-  const x = round(point.x, 2);
-  const y = round(point.y, 2);
-  return `${x},${y}`;
-}
-
 function xamlFontAttributes(fontWeight) {
   switch (fontWeight) {
     case 700: return 'Bold';
@@ -55,16 +49,8 @@ function xamlFontAttributes(fontWeight) {
   }
 }
 
-function xamlCharacterSpacing(letterSpacing) {
-  // LetterSpacing is in points
-  // CharacterSpacing is in units of 1/1000 of an em
-  // 1 em = 12 points
-  return Math.round((letterSpacing / 12) * 1000);
-}
-
 function xamlStyle(context, textStyle) {
   const ignoreFontFamily = context.getOption('ignoreFontFamily');
-  const useFfImageLoadning = context.getOption('useFfImageLoadning');
   const textAlignmentMode = context.getOption('textAlignmentMode');
   const hasTextAlignment = textAlignmentMode === 'style';
   const textColor = textStyle.color && xamlColorLiteral(context, textStyle.color);
@@ -126,7 +112,7 @@ function styleguideColors(context, colors) {
   }
 
   const code = colorsTemplate({
-    colors: processedColors.map(color => xamlColor(context, color))
+    colors: processedColors.map(color => xamlColor(context, color)),
   });
 
   return xamlCode(code);
@@ -169,11 +155,6 @@ function layer(context, selectedLayer) {
   if (selectedLayer.type === 'text') {
     const label = xamlLabel(context, selectedLayer);
     const code = labelTemplate(label);
-    return xamlCode(code);
-  }
-  else if(selectedLayer.type ==='image'){
-    const image = xamlImage(context, selectedLayer);
-    const code = imageTemplate(image);
     return xamlCode(code);
   }
   return null;
