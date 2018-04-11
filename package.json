@@ -1,15 +1,15 @@
 {
-    "name": "zeplin-extension-xaml",
+    "name": "zeplin-extension-xamarin",
     "version": "0.1.0",
-    "description": "Generates XAML (Universal Windows Platform) snippets from colors, text styles and layers.",
+    "description": "Generates XAML for Xamarin.Forms snippets.",
     "author": {
-        "name": "nventive",
-        "url": "http://nventive.com"
+        "name": "Arnstein Johansen",
+        "url": "http://codejunkii.com"
     },
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
-        "url": "https://github.com/nventive/zeplin-extension-xaml"
+        "url": "https://github.com/goldnarms/zeplin-extension-xaml"
     },
     "scripts": {
         "start": "zem start",
@@ -31,7 +31,6 @@
     "zeplin": {
         "displayName": "XAML",
         "projectTypes": [
-            "web",
             "android",
             "ios"
         ],
@@ -49,44 +48,26 @@
                 "default": ""
             },
             {
-                "name": "Define TextAlignment on",
+                "name": "Define HorizontalTextAlignment on",
                 "type": "picker",
                 "id": "textAlignmentMode",
-                "default": "textBlock",
+                "default": "label",
                 "options": [
-                    {
-                        "name": "TextBlock",
-                        "value": "textBlock"
-                    },
                     {
                         "name": "Style",
                         "value": "style"
+                    },
+                    {
+                        "name": "Label",
+                        "value": "label"
                     }
                 ]
-            },
-            {
-                "name": "Ignore CharacterSpacing",
-                "type": "switch",
-                "id": "ignoreCharacterSpacing",
-                "default": false
             },
             {
                 "name": "Ignore FontFamily",
                 "type": "switch",
                 "id": "ignoreFontFamily",
                 "default": false
-            },
-            {
-                "name": "Ignore LineHeight",
-                "type": "switch",
-                "id": "ignoreLineHeight",
-                "default": false
-            },
-            {
-                "name": "Add TextTrimming.CharacterEllipsis to all text styles",
-                "type": "switch",
-                "id": "addCharacterEllipsis",
-                "default": true
             }
         ]
     }

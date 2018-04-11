@@ -4,9 +4,8 @@ import sortBy from 'lodash/sortBy';
 import indentString from 'indent-string';
 import colorsTemplate from './templates/colors.mustache';
 import textStylesTemplate from './templates/textStyles.mustache';
-import textBlockTemplate from './templates/textBlock.mustache';
+import labelTemplate from './templates/label.mustache';
 import resourceDictionaryTemplate from './templates/resourceDictionary.mustache';
-import linearGradientBrushTemplate from './templates/linearGradientBrush.mustache';
 
 function debug(object) { // eslint-disable-line no-unused-vars
   return {
@@ -33,13 +32,6 @@ function xamlColorLiteral(context, color) {
     : xamlColorHex(color);
 }
 
-function xamlSolidColorBrushLiteral(context, color) {
-  const colorResource = context.project.findColorEqual(color);
-  return colorResource
-    ? `{StaticResource ${actualKey(context, colorResource.name)}Brush}`
-    : xamlColorHex(color);
-}
-
 function xamlColor(context, color) {
   return {
     key: actualKey(context, color.name),
@@ -53,42 +45,13 @@ function xamlPointLiteral(point) {
   return `${x},${y}`;
 }
 
-function xamlGradientStop(context, gradientStop) {
-  return {
-    offset: gradientStop.position,
-    color: xamlColorLiteral(context, gradientStop.color),
-  };
-}
-
-function xamlLinearGradientBrush(context, linearGradientBrush) {
-  return {
-    startPoint: xamlPointLiteral(linearGradientBrush.from),
-    endPoint: xamlPointLiteral(linearGradientBrush.to),
-    gradientStops: linearGradientBrush.colorStops.map(stop => xamlGradientStop(context, stop)),
-  };
-}
-
-function xamlSolidColorBrush(context, color) {
-  return {
-    key: `${actualKey(context, color.name)}Brush`,
-    color: `{StaticResource ${actualKey(context, color.name)}}`,
-  };
-}
-
-function xamlFontWeight(fontWeight) {
+function xamlFontAttributes(fontWeight) {
   switch (fontWeight) {
-    case 100: return 'Thin';
-    case 200: return 'ExtraLight';
-    case 300: return 'Light';
-    case 350: return 'SemiLight';
-    case 400: return 'Normal';
-    case 500: return 'Medium';
-    case 600: return 'SemiBold';
     case 700: return 'Bold';
-    case 800: return 'ExtraBold';
-    case 900: return 'Black';
-    case 950: return 'ExtraBlack';
-    default: return 'Normal';
+    case 800: return 'Bold';
+    case 900: return 'Bold';
+    case 950: return 'Bold';
+    default: return 'None';
   }
 }
 
@@ -100,40 +63,34 @@ function xamlCharacterSpacing(letterSpacing) {
 }
 
 function xamlStyle(context, textStyle) {
-  const addCharacterEllipsis = context.getOption('addCharacterEllipsis');
-  const ignoreCharacterSpacing = context.getOption('ignoreCharacterSpacing');
   const ignoreFontFamily = context.getOption('ignoreFontFamily');
-  const ignoreLineHeight = context.getOption('ignoreLineHeight');
+  const useFfImageLoadning = context.getOption('useFfImageLoadning');
   const textAlignmentMode = context.getOption('textAlignmentMode');
   const hasTextAlignment = textAlignmentMode === 'style';
-  const foreground = textStyle.color && xamlSolidColorBrushLiteral(context, textStyle.color);
+  const textColor = textStyle.color && xamlColorLiteral(context, textStyle.color);
 
   return {
     key: actualKey(context, textStyle.name),
-    foreground,
+    textColor,
     fontFamily: !ignoreFontFamily && textStyle.fontFamily,
     fontSize: round(textStyle.fontSize, 2),
-    characterSpacing: !ignoreCharacterSpacing && xamlCharacterSpacing(textStyle.letterSpacing),
-    fontStyle: capitalize(textStyle.fontStyle),
-    fontWeight: xamlFontWeight(textStyle.fontWeight),
-    lineHeight: !ignoreLineHeight && round(textStyle.lineHeight, 2),
-    textAlignment: hasTextAlignment && capitalize(textStyle.textAlign),
-    textTrimming: addCharacterEllipsis && 'CharacterEllipsis',
+    fontAttributes: xamlFontAttributes(textStyle.fontWeight),
+    horizontalTextAlignment: hasTextAlignment && capitalize(textStyle.textAlign),
   };
 }
 
-function xamlTextBlock(context, textLayer) {
+function xamlLabel(context, textLayer) {
   const textAlignmentMode = context.getOption('textAlignmentMode');
-  const hasTextAlignment = textAlignmentMode === 'textBlock';
+  const hasTextAlignment = textAlignmentMode === 'label';
   const { textStyle } = textLayer.textStyles[0];
   const textStyleResource = context.project.findTextStyleEqual(textStyle);
-  const textBlock = textStyleResource ?
+  const label = textStyleResource ?
     { style: actualKey(context, textStyleResource.name) } : xamlStyle(context, textStyle);
 
-  textBlock.text = textLayer.content;
-  textBlock.textAlignment = hasTextAlignment && capitalize(textStyle.textAlign);
+  label.text = textLayer.content;
+  label.horizontalTextAlignment = hasTextAlignment && capitalize(textStyle.textAlign);
 
-  return textBlock;
+  return label;
 }
 
 function xamlCode(code) {
@@ -169,8 +126,7 @@ function styleguideColors(context, colors) {
   }
 
   const code = colorsTemplate({
-    colors: processedColors.map(color => xamlColor(context, color)),
-    solidColorBrushes: processedColors.map(color => xamlSolidColorBrush(context, color)),
+    colors: processedColors.map(color => xamlColor(context, color))
   });
 
   return xamlCode(code);
@@ -206,26 +162,19 @@ function exportStyleguideColors(context, colors) {
 function exportStyleguideTextStyles(context, textStyles) {
   const resources = indentString(styleguideTextStyles(context, textStyles).code, 4);
   const resourceDictionary = resourceDictionaryTemplate({ resources });
-  return xamlFile(resourceDictionary, 'TextBlock.xaml');
+  return xamlFile(resourceDictionary, 'Labels.xaml');
 }
 
 function layer(context, selectedLayer) {
   if (selectedLayer.type === 'text') {
-    const textBlock = xamlTextBlock(context, selectedLayer);
-    const code = textBlockTemplate(textBlock);
+    const label = xamlLabel(context, selectedLayer);
+    const code = labelTemplate(label);
     return xamlCode(code);
   }
-
-  if (selectedLayer.type === 'shape') {
-    const linearGradient = selectedLayer.fills
-      .filter(fill => fill.type === 'gradient')
-      .map(fill => fill.gradient)
-      .filter(gradient => gradient.type === 'linear')[0];
-    if (linearGradient) {
-      const linearGradientBrush = xamlLinearGradientBrush(context, linearGradient);
-      const code = linearGradientBrushTemplate(linearGradientBrush);
-      return xamlCode(code);
-    }
+  else if(selectedLayer.type ==='image'){
+    const image = xamlImage(context, selectedLayer);
+    const code = imageTemplate(image);
+    return xamlCode(code);
   }
   return null;
 }

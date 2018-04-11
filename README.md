@@ -11,55 +11,29 @@ Sample colors output:
 <Color x:Key="PrimaryColor">#FFFF0000</Color>
 <Color x:Key="SecondaryColor">#FF00FF00</Color>
 <Color x:Key="TertiaryColor">#FF0000FF</Color>
-<SolidColorBrush x:Key="PrimaryColorBrush"
-                 Color="{StaticResource PrimaryColor}" />
-<SolidColorBrush x:Key="SecondaryColorBrush"
-                 Color="{StaticResource SecondaryColor}" />
-<SolidColorBrush x:Key="TertiaryColorBrush"
-                 Color="{StaticResource TertiaryColor}" />
 ```
 
 Sample text style output:
 ```xml
 <Style x:Key="SampleTextStyle"
-       TargetType="TextBlock">
-    <Setter Property="CharacterSpacing"
-            Value="0" />
+       TargetType="Label">
     <Setter Property="FontFamily"
             Value="SFProText" />
     <Setter Property="FontSize"
             Value="20" />
     <Setter Property="FontStyle"
             Value="Normal" />
-    <Setter Property="FontWeight"
-            Value="Normal" />
-    <Setter Property="Foreground"
-            Value="{StaticResource PrimaryColorBrush}" />
-    <Setter Property="LineHeight"
-            Value="20" />
-    <Setter Property="TextTrimming"
-            Value="CharacterEllipsis" />
+    <Setter Property="FontAttributes"
+            Value="Bold" />
 </Style>
 ```
 
 Sample text layer output:
 ```xml
-<TextBlock Text="Hello"
+<Label Text="Hello"
            Style="{StaticResource SampleTextStyle}"
-           TextAlignment="Center">
+           HorizontalTextAlignment="Center">
 ```
-
-Sample gradient layer output:
-```xml
-<LinearGradientBrush StartPoint="0.5,0.5" 
-                     EndPoint="0.5,1">
-    <GradientStop Color="{StaticResource SecondaryColor}" 
-                  Offset="0" />
-    <GradientStop Color="{StaticResource TertiaryColor}" 
-                  Offset="1" />
-</LinearGradientBrush>
-```
-
 ## Options
 
 #### Sort styleguide resources
@@ -76,7 +50,7 @@ This is useful when dealing with values that are almost identical (i.e., `#FFFFF
 
 #### Define TextAlignment on
 
-Pick whether `TextAlignment` should be defined on `Style` or `TextBlock`.
+Pick whether `TextAlignment` should be defined on `Style`.
 
 This is useful if you consider text alignment to be part of the layout rather than the style. Can be used in conjunction with duplicate consolidation.
 
