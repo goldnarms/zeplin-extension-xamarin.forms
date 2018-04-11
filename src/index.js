@@ -51,31 +51,28 @@ function xamlFontAttributes(fontWeight) {
 
 function xamlStyle(context, textStyle) {
   const ignoreFontFamily = context.getOption('ignoreFontFamily');
+  const textColor = textStyle.color && xamlColorLiteral(context, textStyle.color);
   const textAlignmentMode = context.getOption('textAlignmentMode');
   const hasTextAlignment = textAlignmentMode === 'style';
-  const textColor = textStyle.color && xamlColorLiteral(context, textStyle.color);
-
   return {
-    key: actualKey(context, textStyle.name),
-    textColor,
-    fontFamily: !ignoreFontFamily && textStyle.fontFamily,
     fontSize: round(textStyle.fontSize, 2),
     fontAttributes: xamlFontAttributes(textStyle.fontWeight),
+    fontFamily: !ignoreFontFamily && textStyle.fontFamily,
+    textColor,
     horizontalTextAlignment: hasTextAlignment && capitalize(textStyle.textAlign),
   };
 }
 
 function xamlLabel(context, textLayer) {
-  const textAlignmentMode = context.getOption('textAlignmentMode');
-  const hasTextAlignment = textAlignmentMode === 'label';
   const { textStyle } = textLayer.textStyles[0];
   const textStyleResource = context.project.findTextStyleEqual(textStyle);
   const label = textStyleResource ?
-    { style: actualKey(context, textStyleResource.name) } : xamlStyle(context, textStyle);
-
+    { style: actualKey(context, textStyleResource.name) }
+    : xamlStyle(context, textStyle);
+  const textAlignmentMode = context.getOption('textAlignmentMode');
+  const hasTextAlignment = textAlignmentMode === 'style';
   label.text = textLayer.content;
   label.horizontalTextAlignment = hasTextAlignment && capitalize(textStyle.textAlign);
-
   return label;
 }
 
@@ -157,7 +154,7 @@ function layer(context, selectedLayer) {
     const code = labelTemplate(label);
     return xamlCode(code);
   }
-  return null;
+  return '';
 }
 
 const extension = {
