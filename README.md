@@ -54,23 +54,10 @@ Pick whether `TextAlignment` should be defined on `Style`.
 
 This is useful if you consider text alignment to be part of the layout rather than the style. Can be used in conjunction with duplicate consolidation.
 
-#### Ignore CharacterSpacing
-
-Toggle whether `CharacterSpacing` should be generated or not.
-
 #### Ignore FontFamily
 
 Toggle whether `FontFamily` should be generated or not.
 
-#### IgnoreLineHeight
-
-Toggle whether `LineHeight` should be generated or not.
-
-#### Add TextTrimming.CharacterEllipsis to all text styles
-
-Toggle whether `TextTrimming.CharacterEllipsis` should be added to all text styles.
-
-This can be useful to prevent unwanted clipping, considering that the platform's default value is `None`.
 
 ## Development
 
