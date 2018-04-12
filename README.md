@@ -1,8 +1,8 @@
-# Zeplin XAML Extension
+# Zeplin Xamarin.Forms Extension
 
-[Zeplin extension](https://extensions.zeplin.io/) that generates XAML (Universal Windows Platform) snippets from colors, text styles and layers.
+[Zeplin extension](https://extensions.zeplin.io/) for Xamarin.Forms.
 
-It is open source and [available on GitHub](https://github.com/nventive/zeplin-extension-xaml).
+[Available on GitHub](https://github.com/goldnarms/zeplin-extension-xamarin.forms).
 
 ## Samples
 
@@ -21,8 +21,6 @@ Sample text style output:
             Value="SFProText" />
     <Setter Property="FontSize"
             Value="20" />
-    <Setter Property="FontStyle"
-            Value="Normal" />
     <Setter Property="FontAttributes"
             Value="Bold" />
 </Style>
@@ -48,18 +46,13 @@ For example, using the value `_duplicate` would replace all instances of `Primar
 
 This is useful when dealing with values that are almost identical (i.e., `#FFFFFF` vs `#FFFFFE`) or properties that don't warrant a distinct style (i.e., `TextAlignment`).
 
-#### Define TextAlignment on
-
-Pick whether `TextAlignment` should be defined on `Style`.
-
-This is useful if you consider text alignment to be part of the layout rather than the style. Can be used in conjunction with duplicate consolidation.
-
 #### Ignore FontFamily
 
 Toggle whether `FontFamily` should be generated or not.
 
 
 ## Development
+I have forked this from the XAML extension for UWP made by Nventive. You can find the repo [here](https://github.com/nventive/zeplin-extension-xaml).
 
 This extension is developed using [zem](https://github.com/zeplin/zem), Zeplin Extension Manager. zem is a command line tool that lets you quickly create and test extensions.
 

@@ -1,7 +1,7 @@
 {
     "name": "zeplin-extension-xamarin",
     "version": "0.1.0",
-    "description": "Generates XAML for Xamarin.Forms snippets.",
+    "description": "Generates XAML for Xamarin.Forms.",
     "author": {
         "name": "Arnstein Johansen",
         "url": "http://codejunkii.com"
@@ -9,7 +9,7 @@
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
-        "url": "https://github.com/goldnarms/zeplin-extension-xaml"
+        "url": "https://github.com/goldnarms/zeplin-extension-xamarin.forms"
     },
     "scripts": {
         "start": "zem start",
