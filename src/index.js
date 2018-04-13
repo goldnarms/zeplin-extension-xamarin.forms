@@ -154,7 +154,7 @@ function layer(context, selectedLayer) {
     const code = labelTemplate(label);
     return xamlCode(code);
   }
-  return '';
+  return null;
 }
 
 const extension = {
