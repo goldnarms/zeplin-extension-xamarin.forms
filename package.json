@@ -29,7 +29,7 @@
         "mustache": "^2.3.0"
     },
     "zeplin": {
-        "displayName": "XAML",
+        "displayName": "Xamarin.Forms",
         "projectTypes": [
             "web",
             "android",
