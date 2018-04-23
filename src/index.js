@@ -15,8 +15,11 @@ function debug(object) { // eslint-disable-line no-unused-vars
 }
 
 function actualKey(context, key) {
-  const duplicateSuffix = context.getOption('duplicateSuffix');
-  return key.replace(duplicateSuffix, '').replace(/\s/g, '');
+  if (key) {
+    const duplicateSuffix = context.getOption('duplicateSuffix');
+    return key.replace(duplicateSuffix, '').replace(/\s/g, '');
+  }
+  return undefined;
 }
 
 function xamlColorHex(color) {
@@ -27,7 +30,8 @@ function xamlColorHex(color) {
 
 function xamlColorLiteral(context, color) {
   const colorResource = context.project.findColorEqual(color);
-  return colorResource
+
+  return colorResource !== undefined
     ? `{StaticResource ${actualKey(context, colorResource.name)}}`
     : xamlColorHex(color);
 }
@@ -55,9 +59,10 @@ function xamlStyle(context, textStyle) {
   const textAlignmentMode = context.getOption('textAlignmentMode');
   const hasTextAlignment = textAlignmentMode === 'style';
   return {
+    key: actualKey(context, textStyle.name),
     fontSize: round(textStyle.fontSize, 2),
     fontAttributes: xamlFontAttributes(textStyle.fontWeight),
-    fontFamily: !ignoreFontFamily && textStyle.fontFamily,
+    fontFamily: !ignoreFontFamily && `${textStyle.fontFamily}#${textStyle.fontWeight}`,
     textColor,
     horizontalTextAlignment: hasTextAlignment && capitalize(textStyle.textAlign),
   };
