@@ -5,6 +5,8 @@ import indentString from 'indent-string';
 import colorsTemplate from './templates/colors.mustache';
 import textStylesTemplate from './templates/textStyles.mustache';
 import labelTemplate from './templates/label.mustache';
+import imageTemplate from './templates/image.mustache';
+import frameTemplate from './templates/frame.mustache';
 import resourceDictionaryTemplate from './templates/resourceDictionary.mustache';
 
 function debug(object) { // eslint-disable-line no-unused-vars
@@ -74,6 +76,36 @@ function xamlLabel(context, textLayer) {
   label.text = textLayer.content;
   label.horizontalTextAlignment = hasTextAlignment && capitalize(textStyle.textAlign);
   return label;
+}
+
+function xamlImage(context, imageLayer) {
+  const image = { widthRequest: imageLayer.rect.width, heightRequest = imageLayer.rect.heigth, source: imageLayer.assets[0] };
+  return image;
+}
+
+function xamlFrame(context, frameLayer) {
+  const hasShadow = !(frameLayer.shadows === undefined || frameLayer.shadows.length == 0);
+  const hasBackgroundColor = !(frameLayer.fills === undefined || frameLayer.fills.length == 0);
+  const cornerRadius = frameLayer.borderRadius || 0;
+  const hadBorder = !(frameLayer.borders === undefined || frameLayer.borders.length == 0);
+  const frame = { 
+    widthRequest: imageLayer.rect.width,
+    heightRequest = imageLayer.rect.heigth, 
+    source: imageLayer.assets[0], 
+    hasShadow: hasShadow,
+    cornerRadius: cornerRadius
+  };
+
+  if(hasBackgroundColor){
+    const backgroundColor = frameLayer.fills[0].color && xamlColorLiteral(context, frameLayer.fills[0].color);
+    frame.backgroundColor = backgroundColor;
+  }
+
+  if(hasBorder){
+    const outlineColor = frameLayer.borders[0].fill.color && xamlColorLiteral(context, frameLayer.borders[0].fill.color);
+    frame.outlineColor = outlineColor;
+  }
+  return frame;
 }
 
 function xamlCode(code) {
@@ -152,6 +184,16 @@ function layer(context, selectedLayer) {
   if (selectedLayer.type === 'text') {
     const label = xamlLabel(context, selectedLayer);
     const code = labelTemplate(label);
+    return xamlCode(code);
+  }
+  else if(selectedLayer.exportable) {
+    const image = xamlImage(context, selectedLayer);
+    const code = imageTemplate(image);
+    return xamlCode(code);
+  }
+  else {
+    const frame = xamlFrame(context, selectedLayer);
+    const code = frameTemplate(frame);
     return xamlCode(code);
   }
   return '';
