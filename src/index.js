@@ -51,6 +51,17 @@ function xamlFontAttributes(fontWeight) {
   }
 }
 
+function toImageName(layerName) {
+  const removeUnderLine = layerName.replace('_', ' ');
+  const words = removeUnderLine.split(' ');
+  let pascalCase = words[0].toLowerCase();
+  for (let i = 1; i < words.length; i += 1) {
+    pascalCase = pascalCase + words[i].charAt(0).toUpperCase() + words[i].substr(1).toLowerCase();
+  }
+  const friendlyName = pascalCase.replace(/\s/g, '');
+  return friendlyName;
+}
+
 function xamlStyle(context, textStyle) {
   const ignoreFontFamily = context.getOption('ignoreFontFamily');
   const textColor = textStyle.color && xamlColorLiteral(context, textStyle.color);
@@ -79,30 +90,35 @@ function xamlLabel(context, textLayer) {
 }
 
 function xamlImage(context, imageLayer) {
-  const image = { widthRequest: imageLayer.rect.width, heightRequest = imageLayer.rect.heigth, source: imageLayer.assets[0] };
+  const image = {
+    widthRequest: imageLayer.rect.width,
+    heightRequest: imageLayer.rect.height,
+    source: toImageName(imageLayer.name),
+  };
   return image;
 }
 
 function xamlFrame(context, frameLayer) {
-  const hasShadow = !(frameLayer.shadows === undefined || frameLayer.shadows.length == 0);
-  const hasBackgroundColor = !(frameLayer.fills === undefined || frameLayer.fills.length == 0);
+  const hasShadow = !(frameLayer.shadows === undefined || frameLayer.shadows.length === 0);
+  const hasBackgroundColor = !(frameLayer.fills === undefined || frameLayer.fills.length === 0);
   const cornerRadius = frameLayer.borderRadius || 0;
-  const hadBorder = !(frameLayer.borders === undefined || frameLayer.borders.length == 0);
-  const frame = { 
-    widthRequest: imageLayer.rect.width,
-    heightRequest = imageLayer.rect.heigth, 
-    source: imageLayer.assets[0], 
-    hasShadow: hasShadow,
-    cornerRadius: cornerRadius
+  const hasBorder = !(frameLayer.borders === undefined || frameLayer.borders.length === 0);
+  const frame = {
+    widthRequest: frameLayer.rect.width,
+    heightRequest: frameLayer.rect.height,
+    hasShadow,
+    cornerRadius,
   };
 
-  if(hasBackgroundColor){
-    const backgroundColor = frameLayer.fills[0].color && xamlColorLiteral(context, frameLayer.fills[0].color);
+  if (hasBackgroundColor) {
+    const backgroundColor = frameLayer.fills[0].color
+    && xamlColorLiteral(context, frameLayer.fills[0].color);
     frame.backgroundColor = backgroundColor;
   }
 
-  if(hasBorder){
-    const outlineColor = frameLayer.borders[0].fill.color && xamlColorLiteral(context, frameLayer.borders[0].fill.color);
+  if (hasBorder) {
+    const outlineColor = frameLayer.borders[0].fill.color &&
+     xamlColorLiteral(context, frameLayer.borders[0].fill.color);
     frame.outlineColor = outlineColor;
   }
   return frame;
@@ -185,18 +201,15 @@ function layer(context, selectedLayer) {
     const label = xamlLabel(context, selectedLayer);
     const code = labelTemplate(label);
     return xamlCode(code);
-  }
-  else if(selectedLayer.exportable) {
+  } else if (selectedLayer.exportable) {
     const image = xamlImage(context, selectedLayer);
     const code = imageTemplate(image);
     return xamlCode(code);
   }
-  else {
-    const frame = xamlFrame(context, selectedLayer);
-    const code = frameTemplate(frame);
-    return xamlCode(code);
-  }
-  return '';
+
+  const frame = xamlFrame(context, selectedLayer);
+  const code = frameTemplate(frame);
+  return xamlCode(code);
 }
 
 const extension = {
