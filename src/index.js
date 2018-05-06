@@ -8,6 +8,7 @@ import labelTemplate from './templates/label.mustache';
 import imageTemplate from './templates/image.mustache';
 import frameTemplate from './templates/frame.mustache';
 import stackLayoutTemplate from './templates/stacklayout.mustache';
+import cssTemplate from './templates/css.mustache';
 import resourceDictionaryTemplate from './templates/resourceDictionary.mustache';
 
 function debug(object) { // eslint-disable-line no-unused-vars
@@ -141,6 +142,31 @@ function xamlStackLayout(context, stackLayer) {
   return stackLayout;
 }
 
+function cssStyle(context, cssLayer) {
+  const hasBackgroundColor = !(cssLayer.fills === undefined || cssLayer.fills.length === 0);
+  const hasShadow = !(cssLayer.shadows === undefined || cssLayer.shadows.length === 0);
+  const hasBorder = !(cssLayer.borders === undefined || cssLayer.borders.length === 0);
+  const css = {
+    className: cssLayer.name,
+    width: cssLayer.rect.width,
+    height: cssLayer.rect.height,
+    opacity: cssLayer.opacity,
+  };
+
+  if (hasBackgroundColor) {
+    const backgroundColor = cssLayer.fills[0].color
+    && xamlColorLiteral(context, cssLayer.fills[0].color);
+    css.backgroundColor = backgroundColor;
+  }
+
+  if (hasBorder) {
+    const borderColor = cssLayer.borders[0].fill.color &&
+     xamlColorLiteral(context, cssLayer.borders[0].fill.color);
+    css.borderColor = borderColor;
+    css.borderWidth = cssLayer.borders[0].thickness;
+  }
+}
+
 function xamlCode(code) {
   return {
     code,
@@ -153,6 +179,13 @@ function xamlFile(code, filename) {
     code,
     language: 'xml',
     filename,
+  };
+}
+
+function cssCode(code) {
+  return {
+    code,
+    language: 'css',
   };
 }
 
@@ -230,6 +263,13 @@ function layer(context, selectedLayer) {
   return xamlCode(code);
 }
 
+
+function css(context, selectedLayer) {
+  const css = cssStyle(context, selectedLayer);
+  const code = cssTemplate(css);
+  return cssCode(code);
+}
+
 const extension = {
   comment,
   styleguideColors,
@@ -237,6 +277,7 @@ const extension = {
   exportStyleguideColors,
   exportStyleguideTextStyles,
   layer,
+  css
 };
 
 export default extension;
