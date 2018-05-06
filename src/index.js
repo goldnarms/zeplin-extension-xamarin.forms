@@ -7,6 +7,7 @@ import textStylesTemplate from './templates/textStyles.mustache';
 import labelTemplate from './templates/label.mustache';
 import imageTemplate from './templates/image.mustache';
 import frameTemplate from './templates/frame.mustache';
+import stackLayoutTemplate from './templates/stacklayout.mustache';
 import resourceDictionaryTemplate from './templates/resourceDictionary.mustache';
 
 function debug(object) { // eslint-disable-line no-unused-vars
@@ -124,6 +125,22 @@ function xamlFrame(context, frameLayer) {
   return frame;
 }
 
+function xamlStackLayout(context, stackLayer) {
+  const hasBackgroundColor = !(stackLayer.fills === undefined || stackLayer.fills.length === 0);
+  const stackLayout = {
+    widthRequest: stackLayer.rect.width,
+    heightRequest: stackLayer.rect.height,
+  };
+
+  if (hasBackgroundColor) {
+    const backgroundColor = stackLayer.fills[0].color
+    && xamlColorLiteral(context, stackLayer.fills[0].color);
+    stackLayout.backgroundColor = backgroundColor;
+  }
+
+  return stackLayout;
+}
+
 function xamlCode(code) {
   return {
     code,
@@ -208,7 +225,8 @@ function layer(context, selectedLayer) {
   }
 
   const frame = xamlFrame(context, selectedLayer);
-  const code = frameTemplate(frame);
+  const stackLayout = xamlStackLayout(context, selectedLayer);
+  const code = frameTemplate(frame) + stackLayoutTemplate(stackLayout);
   return xamlCode(code);
 }
 
