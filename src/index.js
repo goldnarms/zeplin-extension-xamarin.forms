@@ -144,27 +144,26 @@ function xamlStackLayout(context, stackLayer) {
 
 function cssStyle(context, cssLayer) {
   const hasBackgroundColor = !(cssLayer.fills === undefined || cssLayer.fills.length === 0);
-  const hasShadow = !(cssLayer.shadows === undefined || cssLayer.shadows.length === 0);
   const hasBorder = !(cssLayer.borders === undefined || cssLayer.borders.length === 0);
-  const css = {
-    className: cssLayer.name,
+  const cssItem = {
+    className: toImageName(cssLayer.name),
     width: cssLayer.rect.width,
     height: cssLayer.rect.height,
     opacity: cssLayer.opacity,
   };
 
   if (hasBackgroundColor) {
-    const backgroundColor = cssLayer.fills[0].color
-    && xamlColorLiteral(context, cssLayer.fills[0].color);
-    css.backgroundColor = backgroundColor;
+    const backgroundColor = xamlColorHex(cssLayer.fills[0].color);
+    cssItem.backgroundColor = backgroundColor;
   }
 
   if (hasBorder) {
-    const borderColor = cssLayer.borders[0].fill.color &&
-     xamlColorLiteral(context, cssLayer.borders[0].fill.color);
-    css.borderColor = borderColor;
-    css.borderWidth = cssLayer.borders[0].thickness;
+    const borderColor = xamlColorHex(cssLayer.borders[0].fill.color);
+    cssItem.borderColor = borderColor;
+    cssItem.borderWidth = cssLayer.borders[0].thickness;
   }
+
+  return cssItem;
 }
 
 function xamlCode(code) {
@@ -249,7 +248,8 @@ function exportStyleguideTextStyles(context, textStyles) {
 function layer(context, selectedLayer) {
   if (selectedLayer.type === 'text') {
     const label = xamlLabel(context, selectedLayer);
-    const code = labelTemplate(label);
+    const cssLabelItem = cssStyle(context, selectedLayer);
+    const code = labelTemplate(label) + cssTemplate(cssLabelItem);
     return xamlCode(code);
   } else if (selectedLayer.exportable) {
     const image = xamlImage(context, selectedLayer);
@@ -259,14 +259,16 @@ function layer(context, selectedLayer) {
 
   const frame = xamlFrame(context, selectedLayer);
   const stackLayout = xamlStackLayout(context, selectedLayer);
-  const code = frameTemplate(frame) + stackLayoutTemplate(stackLayout);
+  const cssItem = cssStyle(context, selectedLayer);
+  const code = frameTemplate(frame) + stackLayoutTemplate(stackLayout) + cssTemplate(cssItem);
+
   return xamlCode(code);
 }
 
 
 function css(context, selectedLayer) {
-  const css = cssStyle(context, selectedLayer);
-  const code = cssTemplate(css);
+  const cssItem = cssStyle(context, selectedLayer);
+  const code = cssTemplate(cssItem);
   return cssCode(code);
 }
 
@@ -277,7 +279,7 @@ const extension = {
   exportStyleguideColors,
   exportStyleguideTextStyles,
   layer,
-  css
+  css,
 };
 
 export default extension;
