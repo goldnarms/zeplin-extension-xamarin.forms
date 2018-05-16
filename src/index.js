@@ -145,6 +145,7 @@ function xamlStackLayout(context, stackLayer) {
 function cssStyle(context, cssLayer) {
   const hasBackgroundColor = !(cssLayer.fills === undefined || cssLayer.fills.length === 0);
   const hasBorder = !(cssLayer.borders === undefined || cssLayer.borders.length === 0);
+  const hasFonts = !(cssLayer.textStyles === undefined || cssLayer.textStyles.length === 0);
   const cssItem = {
     className: toImageName(cssLayer.name),
     width: cssLayer.rect.width,
@@ -161,6 +162,13 @@ function cssStyle(context, cssLayer) {
     const borderColor = xamlColorHex(cssLayer.borders[0].fill.color);
     cssItem.borderColor = borderColor;
     cssItem.borderWidth = cssLayer.borders[0].thickness;
+  }
+  if (hasFonts) {
+    cssItem.fontFamily = cssLayer.textStyles[0].textStyle.fontFamily;
+    cssItem.fontSize = cssLayer.textStyles[0].textStyle.fontSize;
+    cssItem.fontStyle = cssLayer.textStyles[0].textStyle.fontStyle;
+    cssItem.textAlign = cssLayer.textStyles[0].textStyle.textAlign;
+    cssItem.color = xamlColorHex(cssLayer.textStyles[0].textStyle.color);
   }
 
   return cssItem;

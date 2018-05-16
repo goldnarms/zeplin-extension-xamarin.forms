@@ -1,12 +1,17 @@
 
 
+-- CSS Class --
 {{#className}}
-.{{className}}{ {{#width}}
+.{{className}} { {{#width}}
     width: {{width}};{{/width}} {{#height}}
     height: {{height}};{{/height}} {{#opacity}}
     opacity: {{opacity}};{{/opacity}} {{#backgroundColor}}
     background-color: {{backgroundColor}};{{/backgroundColor}} {{#borderColor}}
     border-color: {{borderColor}}; {{/borderColor}} {{#borderWidth}}
-    border-width: {{borderWidth}};{{/borderWidth}}
+    border-width: {{borderWidth}};{{/borderWidth}} {{#fontFamily}}
+    font-family: {{fontFamily}};{{/fontFamily}} {{#fontSize}}
+    font-size: {{fontSize}};{{/fontSize}} {{#fontStyle}}
+    font-style: {{fontStyle}};{{/fontStyle}} {{#color}}
+    color: {{color}};{{/color}}
 }
 {{/className}}
