@@ -287,7 +287,6 @@ const extension = {
   exportStyleguideColors,
   exportStyleguideTextStyles,
   layer,
-  css,
 };
 
 export default extension;
