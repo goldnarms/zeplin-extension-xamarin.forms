@@ -189,13 +189,6 @@ function xamlFile(code, filename) {
   };
 }
 
-function cssCode(code) {
-  return {
-    code,
-    language: 'css',
-  };
-}
-
 function comment(context, text) {
   return `<!-- ${text} -->`;
 }
@@ -258,11 +251,13 @@ function layer(context, selectedLayer) {
     const label = xamlLabel(context, selectedLayer);
     const cssLabelItem = cssStyle(context, selectedLayer);
     const code = labelTemplate(label) + cssTemplate(cssLabelItem);
-    return xamlCode(code);
+
+    return xamlCode(`${code}`);
   } else if (selectedLayer.exportable) {
     const image = xamlImage(context, selectedLayer);
     const code = imageTemplate(image);
-    return xamlCode(code);
+
+    return xamlCode(`${code}`);
   }
 
   const frame = xamlFrame(context, selectedLayer);
@@ -270,14 +265,7 @@ function layer(context, selectedLayer) {
   const cssItem = cssStyle(context, selectedLayer);
   const code = frameTemplate(frame) + stackLayoutTemplate(stackLayout) + cssTemplate(cssItem);
 
-  return xamlCode(code);
-}
-
-
-function css(context, selectedLayer) {
-  const cssItem = cssStyle(context, selectedLayer);
-  const code = cssTemplate(cssItem);
-  return cssCode(code);
+  return xamlCode(`${code}`);
 }
 
 const extension = {
