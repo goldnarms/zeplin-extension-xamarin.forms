@@ -194,14 +194,14 @@ function xamlFile(code, filename) {
   };
 }
 
-function comment(context, text) {
-  return `<!-- ${text} -->`;
-}
+function colors(context) {
+  if (!context.project) {
+    return;
+  }
 
-function styleguideColors(context, colors) {
   const sortResources = context.getOption('sortResources');
   const duplicateSuffix = context.getOption('duplicateSuffix');
-  let processedColors = colors;
+  let processedColors = context.project.colors;
 
   if (sortResources) {
     processedColors = sortBy(processedColors, 'name');
@@ -218,10 +218,11 @@ function styleguideColors(context, colors) {
   return xamlCode(code);
 }
 
-function styleguideTextStyles(context, textStyles) {
+function textStyles(context) {
+  const containerType = "project" in context ? "project" : "styleguide";
   const sortResources = context.getOption('sortResources');
   const duplicateSuffix = context.getOption('duplicateSuffix');
-  let processedTextStyles = textStyles;
+  let processedTextStyles = context[containerType].textStyles;
 
   if (sortResources) {
     processedTextStyles = sortBy(processedTextStyles, 'name');
@@ -239,14 +240,14 @@ function styleguideTextStyles(context, textStyles) {
   return xamlCode(code);
 }
 
-function exportStyleguideColors(context, colors) {
-  const resources = indentString(styleguideColors(context, colors).code, 4);
+function exportColors(context) {
+  const resources = indentString(colors(context).code, 4);
   const resourceDictionary = resourceDictionaryTemplate({ resources });
   return xamlFile(resourceDictionary, 'Colors.xaml');
 }
 
-function exportStyleguideTextStyles(context, textStyles) {
-  const resources = indentString(styleguideTextStyles(context, textStyles).code, 4);
+function exportTextStyles(context) {
+  const resources = indentString(textStyles(context).code, 4);
   const resourceDictionary = resourceDictionaryTemplate({ resources });
   return xamlFile(resourceDictionary, 'Labels.xaml');
 }
@@ -274,11 +275,10 @@ function layer(context, selectedLayer) {
 }
 
 const extension = {
-  comment,
-  styleguideColors,
-  styleguideTextStyles,
-  exportStyleguideColors,
-  exportStyleguideTextStyles,
+  colors,
+  textStyles,
+  exportColors,
+  exportTextStyles,
   layer,
 };
 
